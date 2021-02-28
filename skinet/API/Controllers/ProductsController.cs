@@ -24,7 +24,7 @@ namespace API.Controllers
             var repository = client.GetDatabase(_configuration.GetValue<string>("Database"));
             Product = repository.GetCollection<Product>("Product");
         }
-         [HttpGet("[action]")]
+         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
             var filter = Builders<Product>.Filter.Empty;
