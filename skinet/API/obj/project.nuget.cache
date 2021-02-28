@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "Lc8Ce64NSD+lcZZ11Fl1A0IjwiKrGx3pYDB/9j7gtS559w+bopgB/8uEmf3hzBVxkpqghnRO4Ii9qJHziSq6ew==",
+  "dgSpecHash": "JxCBkHKU+B0CnfwQ8SvcQn7k+9YX9+hA1R2IaWARmCcodEU7zWmaTi0AMz8w0Bygs76JXcfhP8oMpUFkzq8JWg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\TM Hridoy\\e-commerce\\skinet\\api\\API.csproj",
+  "projectFilePath": "C:\\Users\\TM Hridoy\\e-commerce\\skinet\\API\\API.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\TM Hridoy\\.nuget\\packages\\dnsclient\\1.3.1\\dnsclient.1.3.1.nupkg.sha512",
     "C:\\Users\\TM Hridoy\\.nuget\\packages\\microsoft.aspnetcore.authentication.jwtbearer\\5.0.1\\microsoft.aspnetcore.authentication.jwtbearer.5.0.1.nupkg.sha512",

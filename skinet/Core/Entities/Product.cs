@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace API.Entities
+namespace Core.Entities
 {
   [BsonIgnoreExtraElements]
   public class Product
