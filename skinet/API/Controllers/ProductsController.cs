@@ -8,6 +8,7 @@ using API.Entities;
 using MongoDB.Driver;
 using MongoDB.Bson;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 
 namespace API.Controllers
 {
@@ -17,23 +18,33 @@ namespace API.Controllers
     {
     
         private readonly ILogger<ProductsController> _logger;
-        private readonly IConfiguration configuration;
-        private IMongoCollection<Product> product;
+        private readonly IConfiguration _configuration;
+        private IMongoCollection<Product> Product;
        
-        public ProductsController(ILogger<ProductsController> logger, IMongoClient client)
+        public ProductsController(ILogger<ProductsController> logger, IMongoClient client, IConfiguration configuration)
         {
             _logger = logger;
-            var repository = client.GetDatabase(configuration["Database"]);
-            product = repository.GetCollection<Product>("Product");
+            _configuration = configuration;
+            var repository = client.GetDatabase(_configuration.GetValue<string>("Database"));
+            Product = repository.GetCollection<Product>("Product");
         }
-        [HttpGet]
-        public ActionResult<List<Product>> GetProducts(){
-
+         [HttpGet("[action]")]
+        public async Task<ActionResult<List<Product>>> GetProducts()
+        {
             var filter = Builders<Product>.Filter.Empty;
-            var products = product.Find(filter).ToList();
+            var products = await Product.Find(filter).ToListAsync();
             return Ok(products);
 
         }
+        
+        [HttpGet("[action]/{id}")]
+        public async Task<ActionResult<List<Product>>> GetProduct(string id)
+        {
+            var filter = Builders<Product>.Filter.Eq(x => x.Id , id);
+            var product = await Product.Find(filter).ToListAsync();
+            return Ok(product);
+        }
+ 
  
     }
 }
