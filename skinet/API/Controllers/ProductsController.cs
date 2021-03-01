@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Microsoft.Extensions.Configuration;
 using Core.Entities;
-
 namespace API.Controllers
 {
     [ApiController]
@@ -34,11 +33,11 @@ namespace API.Controllers
         }
         
         [HttpGet("[action]/{id}")]
-        public async Task<ActionResult<List<Product>>> GetProduct(string id)
+        public async Task<ActionResult<Product>> GetProduct(string id)
         {
             var filter = Builders<Product>.Filter.Eq(x => x.Id , id);
-            var product = await Product.Find(filter).ToListAsync();
-            return Ok(product);
+            var product = await Product.FindAsync(filter);
+            return Ok(product.ToString());
         }
  
  
