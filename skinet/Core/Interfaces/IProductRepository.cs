@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Core.Entities;
 
-namespace API.Interfaces
+namespace Core.Interfaces
 {
-    public interface IProduct
+    public interface IProductRepository
     {
          Task<Product> GetProductByIdAsync(string id);
-         Task<IReadOnlyList<Product>> GetProductsAsync(string id);
-
+         Task<IReadOnlyList<Product>> GetProductsAsync();
+        
     }
 }

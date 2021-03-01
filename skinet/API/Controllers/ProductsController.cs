@@ -3,43 +3,41 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
-using Microsoft.Extensions.Configuration;
 using Core.Entities;
+using Core.Interfaces;
+
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
-    
+
         private readonly ILogger<ProductsController> _logger;
-        private readonly IConfiguration _configuration;
-        private IMongoCollection<Product> Product;
-       
-        public ProductsController(ILogger<ProductsController> logger, IMongoClient client, IConfiguration configuration)
+        private readonly IProductRepository _productRepository;
+        public ProductsController(IProductRepository productRepository)
         {
-            _logger = logger;
-            _configuration = configuration;
-            var repository = client.GetDatabase(_configuration.GetValue<string>("Database"));
-            Product = repository.GetCollection<Product>("Product");
+            _productRepository = productRepository;
+
         }
-         [HttpGet]
+
+        [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
-            var filter = Builders<Product>.Filter.Empty;
-            var products = await Product.Find(filter).ToListAsync();
+
+            var products = await _productRepository.GetProductsAsync();
             return Ok(products);
 
         }
-        
+
         [HttpGet("[action]/{id}")]
         public async Task<ActionResult<Product>> GetProduct(string id)
         {
-            var filter = Builders<Product>.Filter.Eq(x => x.Id , id);
-            var product = await Product.FindAsync(filter);
-            return Ok(product.ToString());
+
+            var product = await _productRepository.GetProductByIdAsync(id);
+            return Ok(product);
         }
- 
- 
+
+
     }
 }
