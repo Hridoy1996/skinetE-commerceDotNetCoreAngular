@@ -20,7 +20,7 @@ namespace Infrastructure.Data
             repository = client.GetDatabase("skinet_db");
             Product = repository.GetCollection<Product>("Product");
         }
-
+       
         public async Task<Product> GetProductByIdAsync(string id)
         {
 
@@ -34,6 +34,20 @@ namespace Infrastructure.Data
             var filter = Builders<Product>.Filter.Empty;
             var products = await Product.Find(filter).ToListAsync();
             return products;
+        }
+
+        public async Task<IReadOnlyList<ProductBrand>> GetProductBrandsAsync()
+        {
+            var filter = Builders<ProductBrand>.Filter.Empty;
+            var productBrands = await repository.GetCollection<ProductBrand>("ProductBrand").Find(filter).ToListAsync();
+            return productBrands;
+        }
+
+        public async Task<IReadOnlyList<ProductType>> GetProductTypesAsync()
+        {
+            var filter = Builders<ProductType>.Filter.Empty;
+            var productTypes = await repository.GetCollection<ProductType>("ProductType").Find(filter).ToListAsync();
+            return productTypes;
         }
     }
 
