@@ -16,7 +16,7 @@ namespace API
 {
     public class Program
     {
-        public static async Task Main(string[] args)
+        public static Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
             /*

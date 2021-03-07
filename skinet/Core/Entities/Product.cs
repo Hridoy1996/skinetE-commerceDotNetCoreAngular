@@ -6,11 +6,8 @@ using System;
 namespace Core.Entities
 {
   [BsonIgnoreExtraElements]
-  public class Product
+  public class Product : BaseEntity
   {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
         public string Name {get; set;}
         public string Description { get; set; }
         public decimal Price { get; set; }

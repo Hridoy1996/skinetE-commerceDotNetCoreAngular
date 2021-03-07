@@ -14,10 +14,17 @@ namespace API.Controllers
     {
 
         private readonly ILogger<ProductsController> _logger;
-        private readonly IProductRepository _productRepository;
-        public ProductsController(IProductRepository productRepository)
+        private readonly IGenericRepository<Product> _productRepo;
+        private readonly IGenericRepository<ProductBrand> _productBrandRepo;
+        public readonly IGenericRepository<ProductType> _productTypeRepo;
+
+        public ProductsController(IGenericRepository<Product> productRepo,
+                                 IGenericRepository<ProductType> productTypeRepo,
+                                 IGenericRepository<ProductBrand> productBrandRepo)
         {
-            _productRepository = productRepository;
+            _productBrandRepo = productBrandRepo;
+            _productTypeRepo = productTypeRepo;
+            _productRepo = productRepo;
 
         }
 
