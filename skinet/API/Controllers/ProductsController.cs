@@ -32,7 +32,7 @@ namespace API.Controllers
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
 
-            var products = await _productRepository.GetProductsAsync();
+            var products = await _productRepo.GetAllAsync();
             return Ok(products);
 
         }
@@ -41,7 +41,7 @@ namespace API.Controllers
         public async Task<ActionResult<Product>> GetProduct(string id)
         {
 
-            var product = await _productRepository.GetProductByIdAsync(id);
+            var product = await _productRepo.GetByIdAsync(id);
             return Ok(product);
         }
 
@@ -49,7 +49,7 @@ namespace API.Controllers
         public async Task<ActionResult<List<ProductType>>> GetProductTypes()
         {
 
-            var productTypes = await _productRepository.GetProductTypesAsync();
+            var productTypes = await _productTypeRepo.GetAllAsync();
             return Ok(productTypes);
         }
 
@@ -57,7 +57,7 @@ namespace API.Controllers
         public async Task<ActionResult<List<ProductBrand>>> GetProductBrands()
         {
 
-            var productBrands = await _productRepository.GetProductBrandsAsync();
+            var productBrands = await  _productBrandRepo.GetAllAsync();
             return Ok(productBrands);
         }
 

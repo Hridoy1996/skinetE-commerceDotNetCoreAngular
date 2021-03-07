@@ -20,39 +20,22 @@ namespace Infrastructure.Data
         {
             _client = client;
             database = client.GetDatabase("skinet_db");
-            _collection = database.GetCollection<T>(GetCollectionName(typeof(T)));
+            _collection = database.GetCollection<T>($"{typeof(T).Name}");
 
         }
 
-        [AttributeUsage(AttributeTargets.Class, Inherited = false)]
-        public class BsonCollectionAttribute : Attribute
-        {
-            public string CollectionName { get; }
-
-            public BsonCollectionAttribute(string collectionName)
-            {
-                CollectionName = collectionName;
-            }
-        }
-        private protected string GetCollectionName(Type documentType)
-        {
-            return ((BsonCollectionAttribute)documentType.GetCustomAttributes(
-                    typeof(BsonCollectionAttribute),
-                    true)
-                .FirstOrDefault())?.CollectionName;
-        }
-        /
         public async Task<IReadOnlyList<T>> GetAllAsync()
         {
             var filter = Builders<T>.Filter.Empty;
-            _collection = database.GetCollection<T>(GetCollectionName(typeof(TDocument)));
-
-            var x =  repository.GetCollection<T>($"{T}");
+            return await _collection.Find(filter).ToListAsync();
         }
 
-        public Task<T> GetByIdAsync(string id)
+        public async Task<T> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var filter = Builders<T>.Filter.Eq(x => x.Id, id);
+            var data = await _collection.FindAsync(filter);
+            return data.FirstOrDefault();
+           
         }
     }
 }

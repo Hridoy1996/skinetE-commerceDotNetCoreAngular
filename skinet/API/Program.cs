@@ -16,10 +16,10 @@ namespace API
 {
     public class Program
     {
-        public static Main(string[] args)
+        public static void Main(string[] args)
         {
             var host = CreateHostBuilder(args).Build();
-            /*
+           /* 
             var connectionString = "mongodb://localhost";
             var client = new MongoClient(connectionString);
             var database = client.GetDatabase("skinet_db");  
@@ -29,7 +29,7 @@ namespace API
 
             var Product = database.GetCollection<Product>("Product");
             await Product.InsertManyAsync(products);
-            */
+          */
             host.Run();
         }
 
