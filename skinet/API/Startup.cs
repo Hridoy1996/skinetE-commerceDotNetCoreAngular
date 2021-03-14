@@ -14,7 +14,7 @@ using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Core.Interfaces;
 using Infrastructure.Data;
-
+using API.Helpers;
 namespace API
 {
     public class Startup
@@ -30,6 +30,7 @@ namespace API
         {
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+            services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

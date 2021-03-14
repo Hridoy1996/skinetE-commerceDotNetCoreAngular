@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Core.Entities;
 using Core.Interfaces;
+using API.Dtos;
+using AutoMapper;
 
 namespace API.Controllers
 {
@@ -17,15 +19,16 @@ namespace API.Controllers
         private readonly IGenericRepository<Product> _productRepo;
         private readonly IGenericRepository<ProductBrand> _productBrandRepo;
         public readonly IGenericRepository<ProductType> _productTypeRepo;
-
+        private readonly IMapper _mapper;
         public ProductsController(IGenericRepository<Product> productRepo,
                                  IGenericRepository<ProductType> productTypeRepo,
-                                 IGenericRepository<ProductBrand> productBrandRepo)
+                                 IGenericRepository<ProductBrand> productBrandRepo,
+                                 IMapper mapper)
         {
             _productBrandRepo = productBrandRepo;
             _productTypeRepo = productTypeRepo;
             _productRepo = productRepo;
-
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -38,11 +41,11 @@ namespace API.Controllers
         }
 
         [HttpGet("[action]/{id}")]
-        public async Task<ActionResult<Product>> GetProduct(string id)
+        public async Task<ActionResult<ProductToReturnDto>> GetProduct(string id)
         {
 
             var product = await _productRepo.GetByIdAsync(id);
-            return Ok(product);
+            return _mapper.Map<Product, ProductToReturnDto>(product);
         }
 
         [HttpGet("[action]")]
