@@ -7,6 +7,7 @@ using Core.Entities;
 using Core.Interfaces;
 using API.Dtos;
 using AutoMapper;
+using Core.Specifications;
 
 namespace API.Controllers
 {
@@ -31,11 +32,35 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet("[action]")]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
 
             var products = await _productRepo.GetAllAsync();
+            return Ok(products);
+
+        } 
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<Product>>> GetProductsAsc(string sort)
+        {
+            IReadOnlyList<Product> products = null;
+            if(sort == "asc")
+              products = await _productRepo.ListAscAsync(u => u.Name);
+            else
+               products = await _productRepo.ListDescAsync(u => u.Name);
+            
+            return Ok(products);
+
+        }
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<Product>>> filter(string sort, string brandName = null, string typeName = null)
+        {
+            IReadOnlyList<Product> products = null;
+            if (sort == "asc")
+                products = await _productRepo.ListAscAsync(u => u.Name , u =>  ( (u.ProductType.Name == typeName) || (u.ProductBrand.Name == brandName)));
+            else
+                products = await _productRepo.ListDescAsync(u => u.Name);
+
             return Ok(products);
 
         }

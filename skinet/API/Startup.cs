@@ -1,20 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using MongoDB.Driver;
 using Core.Interfaces;
 using Infrastructure.Data;
 using API.Helpers;
+using StackExchange.Redis;
+using API.Extensions;
+
 namespace API
 {
     public class Startup
@@ -28,10 +24,17 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
+            services.AddSingleton<IConnectionMultiplexer>(c =>
+           {   
+               var configuration = ConfigurationOptions.Parse(_configuration
+                   .GetConnectionString("Redis"),true);
+               return ConnectionMultiplexer.Connect(configuration);
+
+            });
+            services.AddApplicationServices();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -41,6 +44,7 @@ namespace API
                var connectionString = s.GetRequiredService<IConfiguration>()["MongoUri"];
                return new MongoClient(connectionString);
            });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
