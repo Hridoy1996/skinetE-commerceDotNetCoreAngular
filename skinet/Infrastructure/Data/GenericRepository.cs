@@ -54,17 +54,13 @@ namespace Infrastructure.Data
             return await _collection.Find(filter).Sort(sort).ToListAsync();
         }
 
-        public async Task<IReadOnlyList<T>> ListAscAsync(Expression<Func<T, object>> fieldName, Expression<Func<T, bool>> criteria = null)
+        public async Task<IReadOnlyList<T>> ListAscAsync(Expression<Func<T, object>> fieldName, Expression<Func<T, bool>> criteria , int? skip , int? limit)
         {
             var filter = Builders<T>.Filter.Empty;
-            //    var sort = Builders<T>.Sort.Ascending(u => u.Name).Descending(u => u.Age);
-            /*
-                       
-                       var sort = Builders<T>.Sort.Ascending();
-                      return await _collection.Find(filter).Sort(sort).ToListAsync();  */
+ 
             var sort = Builders<T>.Sort.Ascending(fieldName);
 
-            return await _collection.Find(criteria).Sort(sort).ToListAsync();
+            return await _collection.Find(criteria).Sort(sort).Skip(skip).Limit(limit).ToListAsync();
         }
     }
 }

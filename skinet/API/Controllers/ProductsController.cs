@@ -8,6 +8,8 @@ using Core.Interfaces;
 using API.Dtos;
 using AutoMapper;
 using Core.Specifications;
+using Core.Entities.Params;
+using API.Helpers;
 
 namespace API.Controllers
 {
@@ -41,11 +43,11 @@ namespace API.Controllers
 
         } 
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Product>>> GetProductsAsc(string sort)
+        public async Task<ActionResult<List<Product>>> GetProducts(string sort)
         {
             IReadOnlyList<Product> products = null;
             if(sort == "asc")
-              products = await _productRepo.ListAscAsync(u => u.Name);
+              products = await _productRepo.ListDescAsync(u => u.Name);
             else
                products = await _productRepo.ListDescAsync(u => u.Name);
             
@@ -53,15 +55,28 @@ namespace API.Controllers
 
         }
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Product>>> filter(string sort, string brandName = null, string typeName = null)
+        public async Task<ActionResult<List<Product>>> GetProductsWithPaggination([FromQuery] ProductParams productParams)
         {
+            
             IReadOnlyList<Product> products = null;
-            if (sort == "asc")
-                products = await _productRepo.ListAscAsync(u => u.Name , u =>  ( (u.ProductType.Name == typeName) || (u.ProductBrand.Name == brandName)));
-            else
-                products = await _productRepo.ListDescAsync(u => u.Name);
+            int count = 0;
+            if (productParams.Sort == "desc")
+            {
+                products = await _productRepo.ListAscAsync(u => u.Name
+                , u => ((u.ProductType.Id == productParams.TypeId) || (u.ProductBrand.Id == productParams.BrandId))
+                , productParams.PageIndex, productParams.pageSize);
 
-            return Ok(products);
+                count = products.Count;
+            }
+            else
+            {
+                products = await _productRepo.ListDescAsync(u => u.Name);
+                count = products.Count; 
+            }
+            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+
+            return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex, productParams.pageSize,
+                count, data));
 
         }
 
