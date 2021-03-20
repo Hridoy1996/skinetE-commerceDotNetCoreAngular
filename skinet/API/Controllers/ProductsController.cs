@@ -35,15 +35,16 @@ namespace API.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Product>>> GetProducts()
+        public async Task<ActionResult<List<ProductToReturnDto>>>  GetProducts()
         {
 
             var products = await _productRepo.GetAllAsync();
-            return Ok(products);
 
+            var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
+            return Ok(data);
         } 
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Product>>> GetProducts(string sort)
+        public async Task<ActionResult<List<Product>>> GetOrderedProducts(string sort)
         {
             IReadOnlyList<Product> products = null;
             if(sort == "asc")
@@ -55,7 +56,7 @@ namespace API.Controllers
 
         }
         [HttpGet("[action]")]
-        public async Task<ActionResult<List<Product>>> GetProductsWithPaggination([FromQuery] ProductParams productParams)
+        public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProductsWithPaggination([FromQuery] ProductParams productParams)
         {
             
             IReadOnlyList<Product> products = null;
