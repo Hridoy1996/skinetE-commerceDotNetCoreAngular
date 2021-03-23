@@ -41,7 +41,7 @@ namespace API.Controllers
         public async Task AddEmbeddedBrand()
         {    
            
-            var productBrands = await _productBrandRepo.GetAllAsync(0,50);
+            var productBrands = await _productBrandRepo.GetAllAsync();
             var builder = Builders<Product>.Update;
 
             foreach(ProductBrand productBrand in productBrands)
@@ -57,7 +57,7 @@ namespace API.Controllers
         public async Task AddEmbeddedType()
         {
 
-            var producTypes = await _productTypeRepo.GetAllAsync(0,50);
+            var producTypes = await _productTypeRepo.GetAllAsync();
             var builder = Builders<Product>.Update;
 
             foreach (ProductType productType in producTypes)

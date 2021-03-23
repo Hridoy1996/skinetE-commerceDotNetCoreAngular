@@ -38,7 +38,7 @@ namespace API.Controllers
         public async Task<ActionResult<List<ProductToReturnDto>>>  GetProducts()
         {
 
-            var products = await _productRepo.GetAllAsync(0,50);
+            var products = await _productRepo.GetAllAsync();
 
             var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
             return Ok(data);
@@ -57,19 +57,17 @@ namespace API.Controllers
         }
         [HttpGet("[action]")]
         public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProductsWithPaggination([FromQuery] ProductParams productParams)
-            {
+        {
             
             IReadOnlyList<Product> products = null;
             int count = 0;
-            if(productParams.BrandId == null && productParams.TypeId == null )
+            if (productParams.Sort == "desc")
             {
-                products = await _productRepo.GetAllAsync( productParams.PageIndex, productParams.pageSize);
-            }
-            else if (productParams.Sort == "priceAsc")
-            {
-                products = await _productRepo.ListAscAsync(u => u.Price
-                , u => ((u.ProductType.Id == productParams.TypeId) && (u.ProductBrand.Id == productParams.BrandId))
+                products = await _productRepo.ListAscAsync(u => u.Name
+                , u => ((u.ProductType.Id == productParams.TypeId) || (u.ProductBrand.Id == productParams.BrandId))
                 , productParams.PageIndex, productParams.pageSize);
+
+                count = products.Count;
             }
             else
             {
@@ -78,9 +76,6 @@ namespace API.Controllers
             }
             var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
 
-            var cn = await _productRepo.GetAllAsync(0, 300);
-            count = cn.Count;
-            
             return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex, productParams.pageSize,
                 count, data));
 
@@ -98,7 +93,7 @@ namespace API.Controllers
         public async Task<ActionResult<List<ProductType>>> GetProductTypes()
         {
 
-            var productTypes = await _productTypeRepo.GetAllAsync(0,50);
+            var productTypes = await _productTypeRepo.GetAllAsync();
             return Ok(productTypes);
         }
 
@@ -106,7 +101,7 @@ namespace API.Controllers
         public async Task<ActionResult<List<ProductBrand>>> GetProductBrands()
         {
 
-            var productBrands = await  _productBrandRepo.GetAllAsync(0,50);
+            var productBrands = await  _productBrandRepo.GetAllAsync();
             return Ok(productBrands);
         }
 

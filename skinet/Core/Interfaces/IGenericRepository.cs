@@ -12,11 +12,10 @@ namespace Core.Interfaces
     public interface IGenericRepository<T> where T : BaseEntity 
     {
         Task<T> GetByIdAsync(string id);
-        Task<IReadOnlyList<T>> GetAllAsync(int? skip, int? limit);
+        Task<IReadOnlyList<T>> GetAllAsync();
         Task<IReadOnlyList<T>> ListAscAsync(Expression<Func<T, object>> filterExpression, Expression<Func<T, bool>> criteria , int? pageIndex , int? pageSize   );
         Task<IReadOnlyList<T>> ListDescAsync(Expression<Func<T, object>> filterExpression);
         
-
         // bool UpdateWithFilterAsync(FilterDefination T)
     }
 }

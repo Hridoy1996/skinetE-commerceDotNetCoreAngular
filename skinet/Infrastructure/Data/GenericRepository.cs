@@ -26,7 +26,11 @@ namespace Infrastructure.Data
 
         }
 
-    
+        public async Task<IReadOnlyList<T>> GetAllAsync()
+        {
+            var filter = Builders<T>.Filter.Empty;
+            return await _collection.Find(filter).ToListAsync();
+        }
 
         public async Task<T> GetByIdAsync(string id)
         {
@@ -58,14 +62,5 @@ namespace Infrastructure.Data
 
             return await _collection.Find(criteria).Sort(sort).Skip(skip).Limit(limit).ToListAsync();
         }
-         public async Task<IReadOnlyList<T>> GetAllAsync(int? skip  , int? limit )
-        {  
- 
-                var filter = Builders<T>.Filter.Empty;
-                return await _collection.Find(filter).Skip(skip).Limit(limit).ToListAsync();
-              
-        }
-            
-        }
-    
+    }
 }
