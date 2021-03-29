@@ -73,19 +73,18 @@ namespace API.Controllers
         public async Task AddSeedData()
         {
 
-
-            string text = System.IO.File.ReadAllText("C:/Users/TM Hridoy/e-commerce/skinet/Infrastructure/Data/SeedData/products.json");
+            string text = System.IO.File.ReadAllText(@"F:\ecommerce\skinetE-commerceDotNetCoreAngular\skinet\Infrastructure\Data\SeedData\products.json");
             var products = BsonSerializer.Deserialize<List<Product>>(text);
             var Product = database.GetCollection<Product>("Product");
             await Product.InsertManyAsync(products);
 
-             text = System.IO.File.ReadAllText("C:/Users/TM Hridoy/e-commerce/skinet/Infrastructure/Data/SeedData/types.json");
+             text = System.IO.File.ReadAllText(@"F:\ecommerce\skinetE-commerceDotNetCoreAngular\skinet\Infrastructure\Data\SeedData\types.json");
              var  types = BsonSerializer.Deserialize<List<ProductType>>(text);
              var Type  = database.GetCollection<ProductType>("ProductType");
              await Type.InsertManyAsync(types);
 
 
-            text = System.IO.File.ReadAllText("C:/Users/TM Hridoy/e-commerce/skinet/Infrastructure/Data/SeedData/brands.json");
+            text = System.IO.File.ReadAllText(@"F:\ecommerce\skinetE-commerceDotNetCoreAngular\skinet\Infrastructure\Data\\SeedData\brands.json");
             var brands = BsonSerializer.Deserialize<List<ProductBrand>>(text);
             var Brand = database.GetCollection<ProductBrand>("ProductBrand");
             await Brand.InsertManyAsync(brands);

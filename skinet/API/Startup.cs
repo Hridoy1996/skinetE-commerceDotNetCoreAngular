@@ -28,9 +28,8 @@ namespace API
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
             services.AddSingleton<IConnectionMultiplexer>(c =>
-           {   
-               var configuration = ConfigurationOptions.Parse(_configuration
-                   .GetConnectionString("Redis"),true);
+           {
+               var configuration = c.GetRequiredService<IConfiguration>()["Redis"];
                return ConnectionMultiplexer.Connect(configuration);
 
             });
