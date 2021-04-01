@@ -10,6 +10,13 @@ using Infrastructure.Data;
 using API.Helpers;
 using StackExchange.Redis;
 using API.Extensions;
+using Microsoft.AspNetCore.Identity;
+using System;
+using MongoDbGenericRepository;
+using AspNetCore.Identity.Mongo;
+using AspNetCore.Identity.Mongo.Model;
+using Core.Entities.Identity;
+using AspNetCore.Identity.MongoDbCore.Models;
 
 namespace API
 {
@@ -32,7 +39,7 @@ namespace API
                var configuration = c.GetRequiredService<IConfiguration>()["Redis"];
                return ConnectionMultiplexer.Connect(configuration);
 
-            });
+           });
             services.AddApplicationServices();
             services.AddCors(opt =>
             {
@@ -50,12 +57,14 @@ namespace API
                var connectionString = s.GetRequiredService<IConfiguration>()["MongoUri"];
                return new MongoClient(connectionString);
            });
-
-
+            var mongoDbContext = new MongoDbContext("mongodb://localhost:27017", "skinet_db");
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                .AddMongoDbStores<IMongoDbContext>(mongoDbContext)
+                .AddDefaultTokenProviders();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -69,8 +78,8 @@ namespace API
             app.UseRouting();
             app.UseStaticFiles();
             app.UseCors("CorsPolicy");
+            app.UseAuthentication();
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

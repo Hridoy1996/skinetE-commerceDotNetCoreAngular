@@ -9,6 +9,10 @@ using API.Dtos;
 using AutoMapper;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization;
+using Core.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
+using Core.Entities.AccountModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -24,23 +28,53 @@ namespace API.Controllers
         public readonly IGenericRepository<ProductType> _productTypeRepo;
         private readonly IMapper _mapper;
         private readonly IMongoDatabase database;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+
         public TestController(IMongoClient client,
                                  IGenericRepository<Product> productRepo,
                                  IGenericRepository<ProductType> productTypeRepo,
                                  IGenericRepository<ProductBrand> productBrandRepo,
-                                 IMapper mapper)
+                                 IMapper mapper,
+                                 UserManager<ApplicationUser> userManager,
+                                 SignInManager<ApplicationUser> signInManager
+                                 )
         {
             database = client.GetDatabase("skinet_db");
             _productBrandRepo = productBrandRepo;
             _productTypeRepo = productTypeRepo;
             _productRepo = productRepo;
             _mapper = mapper;
+            _userManager = userManager;
+            _signInManager = signInManager;
+
         }
 
         [HttpPost("[action]")]
-        public async Task AddEmbeddedBrand()
-        {    
+
+        public async Task Register([FromBody]RegisterModel model, string returnUrl = null)
+        {
            
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email, DisplayName= "TM Hridoy"};
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+                    // Send an email with this link
+                    //var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: HttpContext.Request.Scheme);
+                    //await _emailSender.SendEmailAsync(model.Email, "Confirm your account",
+                    //    "Please confirm your account by clicking this link: <a href=\"" + callbackUrl + "\">link</a>");
+                    await _signInManager.SignInAsync(user, isPersistent: false);
+                return;
+                }
+            
+        }
+        [HttpPost("[action]")]
+        public async Task AddEmbeddedBrand()
+        {
+           
+
             var productBrands = await _productBrandRepo.GetAllAsync();
             var builder = Builders<Product>.Update;
 
@@ -89,7 +123,16 @@ namespace API.Controllers
             var Brand = database.GetCollection<ProductBrand>("ProductBrand");
             await Brand.InsertManyAsync(brands);
         }
+        [HttpPost("[action]")]
+        public async Task<Product> TestUpdate()
+        {
+            var filter = Builders<Product>.Filter.Eq(x => x.Id, "1");
 
-
+            var product = database.GetCollection<Product>("Product");
+            var data = await  product.FindAsync(filter);
+            var item = data.FirstOrDefault();
+            item.Name = "Hridoy";
+            return item;
+        }
     }
 }
