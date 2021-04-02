@@ -17,6 +17,9 @@ using AspNetCore.Identity.Mongo;
 using AspNetCore.Identity.Mongo.Model;
 using Core.Entities.Identity;
 using AspNetCore.Identity.MongoDbCore.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace API
 {
@@ -48,10 +51,13 @@ namespace API
                     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
                 });
             });
+
+            /*
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
+            */
             services.AddSingleton<IMongoClient, MongoClient>(s =>
            {
                var connectionString = s.GetRequiredService<IConfiguration>()["MongoUri"];
@@ -61,25 +67,40 @@ namespace API
             services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddMongoDbStores<IMongoDbContext>(mongoDbContext)
                 .AddDefaultTokenProviders();
+            services.AddMvc();
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Token:Key"])),
+                        ValidIssuer = _configuration["Token:Issuer"],
+                        ValidateIssuer = true, 
+                        ValidateAudience = false
+                    };
+                    
+                });
+            services.AddAuthorization();
+
+
         }
 
-            // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
-
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
             app.UseStaticFiles();
+            app.UseRouting();
             app.UseCors("CorsPolicy");
+            app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

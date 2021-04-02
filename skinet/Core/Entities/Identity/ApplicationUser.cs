@@ -27,7 +27,8 @@ namespace Core.Entities.Identity
 			this.DisplayName = displayName;
 		}
 		public string DisplayName { get; set; }
-		
+		public Address Address { get; set; }
+
 	}
 
 }
