@@ -67,7 +67,7 @@ namespace API.Controllers
         }
 
         [HttpGet("[action]")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<ActionResult<UserDto>> GetCurrentUser()
         {
             var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
@@ -111,9 +111,8 @@ namespace API.Controllers
             else
                 return BadRequest("problem updaing user");
         }
-        [Authorize]
         [HttpPost("login")]
-        public async Task<ActionResult<UserDto>> Login(LoginViewModel loginViewModel, string returnUrl = null)
+        public async Task<ActionResult<UserDto>> Login(LoginViewModel loginViewModel)
         {
  
                 // This doesn't count login failures towards account lockout
@@ -142,7 +141,10 @@ namespace API.Controllers
 
         public async Task<ActionResult<UserDto>> Register([FromBody] RegisterModel model, string returnUrl = null)
         {
-
+            if (CheckEmailExistsAsync(model.Email).Result.Value)
+            {
+                return  BadRequest("already exits the user");
+            }
             var user = new ApplicationUser
             {
                 UserName = model.Email,
