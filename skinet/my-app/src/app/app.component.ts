@@ -19,13 +19,13 @@ ngOnInit(): void {
 
   loadCurrentUser(){
     const token = localStorage.getItem('token');
-    if (token){
+   
       this.accountService.localCurrentUser(token).subscribe(() => {
         console.log('loaded user');
       }, error => {
         console.log(error);
       });
-    }
+    
   }
   loadBasket()
   {

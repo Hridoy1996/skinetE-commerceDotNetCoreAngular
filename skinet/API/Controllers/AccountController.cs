@@ -137,8 +137,14 @@ namespace API.Controllers
             return Unauthorized();
 
         }
-        [HttpPost("[action]")]
+        [HttpGet("[action]")]
+        public bool EmailExits(string email)
+        {
+            return CheckEmailExistsAsync(email).Result.Value;
+     
+        }
 
+        [HttpPost("[action]")]
         public async Task<ActionResult<UserDto>> Register([FromBody] RegisterModel model, string returnUrl = null)
         {
             if (CheckEmailExistsAsync(model.Email).Result.Value)
@@ -147,7 +153,7 @@ namespace API.Controllers
             }
             var user = new ApplicationUser
             {
-                UserName = model.Email,
+                UserName = model.userName,
                 Email = model.Email,
                 DisplayName = "TM Hridoy",
                 Address = new Address
@@ -171,7 +177,7 @@ namespace API.Controllers
                 {
                     Email = user.Email,
                     Token = tokenService.CreateToken(user),
-                    UserName = user.DisplayName
+                    UserName = user.UserName
                 };
             }
             else

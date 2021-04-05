@@ -13,6 +13,7 @@ using Core.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Core.Entities.AccountModels;
 using Microsoft.AspNetCore.Authorization;
+using Core.Entities.OrderAggregate;
 
 namespace API.Controllers
 {
@@ -110,6 +111,15 @@ namespace API.Controllers
             var Brand = database.GetCollection<ProductBrand>("ProductBrand");
             await Brand.InsertManyAsync(brands);
         }
+        [HttpPost("[action]")]
+        public async Task AddDeliverySeedData()
+        {
+
+            string text = System.IO.File.ReadAllText(@"F:\ecommerce\skinetE-commerceDotNetCoreAngular\skinet\Infrastructure\Data\SeedData\delivery.json");
+            var products = BsonSerializer.Deserialize<List<DelivaryMethod>>(text);
+            var Product = database.GetCollection<DelivaryMethod>("DelivaryMethod");
+            await Product.InsertManyAsync(products);
+ }
         [HttpPost("[action]")]
         public async Task<Product> TestUpdate()
         {

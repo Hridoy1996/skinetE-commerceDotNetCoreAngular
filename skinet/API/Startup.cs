@@ -40,7 +40,7 @@ namespace API
             services.AddSingleton<IConnectionMultiplexer>(c =>
            {
                var configuration = c.GetRequiredService<IConfiguration>()["Redis"];
-               return ConnectionMultiplexer.Connect(configuration);
+                return ConnectionMultiplexer.Connect(configuration);
 
            });
             services.AddApplicationServices();
@@ -52,12 +52,12 @@ namespace API
                 });
             });
 
-            /*
+          /*
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
-            */
+           */
             services.AddSingleton<IMongoClient, MongoClient>(s =>
            {
                var connectionString = s.GetRequiredService<IConfiguration>()["MongoUri"];
