@@ -14,6 +14,7 @@ namespace Core.Entities.OrderAggregate
 
         public OrderItem(ProductItemOrdered itemOrdered, decimal price, int quality)
         {
+            Id = Guid.NewGuid().ToString();
             ItemOrdered = itemOrdered;
             Price = price;
             Quality = quality;

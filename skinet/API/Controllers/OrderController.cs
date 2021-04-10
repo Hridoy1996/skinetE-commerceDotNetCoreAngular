@@ -27,12 +27,13 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-        [HttpPost]
+       
+        [HttpPost("[action]")]
         public async Task<ActionResult<Order>> CreateOrder(OrderDto orderDto)
         {
             var email = HttpContext.User?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
             var address = _mapper.Map<AddressDto, Address>(orderDto.ShipToAddress);
-            var order = await _orderService.CreateOrderAsync(email, orderDto.DeliveryMethod, orderDto.BasketId,
+            var order = await _orderService.CreateOrderAsync(email, orderDto.DeliveryMethodId, orderDto.BasketId,
                 address);
             if (order == null) return BadRequest();
             return Ok(order);

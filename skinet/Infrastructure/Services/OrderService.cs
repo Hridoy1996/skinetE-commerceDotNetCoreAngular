@@ -45,11 +45,7 @@ namespace Infrastructure.Services
             return order;
         }
 
-        public Task<Order> CreateOrderAsync(string buyerEmail, int deliveryMethod, string basketId, Address shippingAddress)
-        {
-            throw new NotImplementedException();
-        }
-
+   
         public Task<IReadOnlyList<DelivaryMethod>> GetDelivaryMethodsAsync(string buyerEmail)
         {
             throw new NotImplementedException();

@@ -11,6 +11,7 @@ namespace Core.Entities.OrderAggregate
         public Order(IReadOnlyList<OrderItem> orderItems, string buyerEmail, Address shipToAddress,
             DelivaryMethod delivaryMethod, decimal subtotal)
         {
+            Id = Guid.NewGuid().ToString();
             BuyerEmail = buyerEmail;
             ShipToAddress = shipToAddress;
             DelivaryMethod = delivaryMethod;

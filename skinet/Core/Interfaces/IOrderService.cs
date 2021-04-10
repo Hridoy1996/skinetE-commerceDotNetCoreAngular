@@ -9,7 +9,7 @@ namespace Core.Interfaces
 {
     public interface IOrderService
     {
-        Task<Order> CreateOrderAsync(string buyerEmail, int deliveryMethod, string basketId,
+        Task<Order> CreateOrderAsync(string buyerEmail, string deliveryMethod, string basketId,
             Address shippingAddress);
         Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail);
         Task<Order> GetOrderByIdAsync(string id, string buyerEmail);
