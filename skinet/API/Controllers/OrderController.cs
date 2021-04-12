@@ -27,7 +27,7 @@ namespace API.Controllers
             _mapper = mapper;
         }
 
-       
+
         [HttpPost("[action]")]
         public async Task<ActionResult<Order>> CreateOrder(OrderDto orderDto)
         {
@@ -38,5 +38,33 @@ namespace API.Controllers
             if (order == null) return BadRequest();
             return Ok(order);
         }
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrdersForUser()
+        {
+            var email = HttpContext.User?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+            var orders = await _orderService.GetOrdersForUserAsync(email);
+
+            return Ok(_mapper.Map<IReadOnlyList<Order>, IReadOnlyList<OrderToReturnDto>>(orders));
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<OrderToReturnDto>> GetOrderByIdForUser(string id)
+        {
+            var email = HttpContext.User?.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
+
+            var order = await _orderService.GetOrderByIdAsync(id, email);
+
+            if (order == null) return BadRequest();
+
+            return Ok(_mapper.Map<Order, OrderToReturnDto>(order));
+        }
+
+        [HttpGet("[action]")]
+        public async Task<ActionResult<List<DelivaryMethod>>> GetDelivaryMethods()
+        {
+            var delivaryMethods = await _orderService.GetDelivaryMethodsAsync();
+            return delivaryMethods;
+        }
     }
+        
 }

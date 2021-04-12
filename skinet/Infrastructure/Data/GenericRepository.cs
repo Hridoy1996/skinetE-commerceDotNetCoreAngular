@@ -26,7 +26,7 @@ namespace Infrastructure.Data
 
         }
 
-        public async Task<IReadOnlyList<T>> GetAllAsync()
+        public async Task<List<T>> GetAllAsync()
         {
             var filter = Builders<T>.Filter.Empty;
             return await _collection.Find(filter).ToListAsync();
@@ -42,10 +42,6 @@ namespace Infrastructure.Data
         }
 
        
-       private IQueryable<T> ApplySpecification(ISpecification<T> spec)
-        {
-            return SpecificationEvalutor<T>.GetQuery(_collection.AsQueryable(), spec);
-        }
 
         public async Task<IReadOnlyList<T>> ListDescAsync(Expression<Func<T, object>> fieldName)
         {
@@ -61,6 +57,18 @@ namespace Infrastructure.Data
             var sort = Builders<T>.Sort.Ascending(fieldName);
 
             return await _collection.Find(criteria).Sort(sort).Skip(skip).Limit(limit).ToListAsync();
+        }
+        public async Task<IReadOnlyList<T>> ListAsync(Expression<Func<T, bool>> criteria)
+        {
+            var filter = Builders<T>.Filter.Empty;
+            return await _collection.Find(criteria).ToListAsync();
+        }
+        public async Task AddAsync(T entity)
+        {
+
+            entity.Id = Guid.NewGuid().ToString();
+            await  _collection.InsertOneAsync(entity);
+            
         }
     }
 }

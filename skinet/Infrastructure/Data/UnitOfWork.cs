@@ -53,6 +53,7 @@ namespace Infrastructure.Data
 
                 _repositories.Add(type, repositoryInstance);
             }
+            _repositories["Product"] =  "Infrastructure.Data.GenericRepository<Core.Entities.Product>" ;
             return (IGenericRepository<T>)_repositories[type];
         }
 

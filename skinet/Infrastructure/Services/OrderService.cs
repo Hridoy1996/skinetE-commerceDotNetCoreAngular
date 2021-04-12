@@ -42,23 +42,27 @@ namespace Infrastructure.Services
             var delivaryMethod = await _dmRepo.GetByIdAsync(deliveryMethodId);
             var subtotal = items.Sum(item => item.Price * item.Quality);
             var order = new Order(items, buyerEmail, shippingAddress, delivaryMethod, subtotal);
+            await _orderRepo.AddAsync(order);
+            await _basketRepo.DeleteBasketAsync(basketId);
             return order;
         }
 
    
-        public Task<IReadOnlyList<DelivaryMethod>> GetDelivaryMethodsAsync(string buyerEmail)
+        public async Task<List<DelivaryMethod>> GetDelivaryMethodsAsync()
         {
-            throw new NotImplementedException();
+            return await _dmRepo.GetAllAsync();
         }
 
-        public Task<Order> GetOrderByIdAsync(string id, string buyerEmail)
+        public async Task<Order> GetOrderByIdAsync(string id, string buyerEmail)
         {
-            throw new NotImplementedException();
+            var Order =  await _orderRepo.ListAsync(u => u.BuyerEmail == buyerEmail && u.Id == id );
+            return Order?.LastOrDefault();
+
         }
 
-        public Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail)
+        public async Task<IReadOnlyList<Order>> GetOrdersForUserAsync(string buyerEmail)
         {
-            throw new NotImplementedException();
+           return await _orderRepo.ListAsync(u => u.BuyerEmail == buyerEmail );        
         }
     }
 }
